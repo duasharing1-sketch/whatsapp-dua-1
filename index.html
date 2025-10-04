@@ -1,16 +1,15 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Share Du'a on WhatsApp</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dua 1 - Dua Sharing</title>
 </head>
 <body>
-<a id="manualLink" href="#" target="_blank" style="display:none;">Open WhatsApp</a>
+  <a id="manualLink" href="#" target="_blank" style="display:none;">Open WhatsApp</a>
 
-<script>
-// === Dua 1 message (keep this exact text) ===
-const message = `*You’re not too far to come back to Allah*
+  <script>
+    const message = `*You’re not too far to come back to Allah*
 
 This powerful dua calls upon Allah ﷻ — by His Names Dhul-Maghfirah (Possessor of Forgiveness), Al-Ghafūr (The Most Forgiving), Al-Ghaffār (The Constant Forgiver), and At-Tawwāb (The Accepter of Repentance) — to forgive every sin, whether public or private, past or future.
 
@@ -38,50 +37,43 @@ Access the full supplication in both English and Arabic at: https://www.duashari
 
 When you share this post, you’re not simply sharing a dua. You’re opening the door to millions of people making sincere dua for you — with the Malaika (Angels) themselves saying “Ameen” to every single one.
 
-May Allah accept it from you, and from everyone it reaches through you.
+May Allah accept it from you, and reward you for all those it reaches through you.
 
 Ameen`;
 
-// === Fallbacks for devices that lack certain glyphs ===
-const fallbacks = {
-  'ﷺ': 'ﷺ (peace be upon him)',
-  'ﷻ': 'ﷻ (may Allah have mercy)'
-};
+    const fallbacks = {
+      'ﷻ': 'ﷻ',
+      'ﷺ': 'ﷺ'
+    };
 
-// Build message with fallbacks (keeps original glyph + readable parenthetical)
-let messageWithFallback = message;
-Object.keys(fallbacks).forEach(k => {
-  messageWithFallback = messageWithFallback.split(k).join(fallbacks[k]);
-});
-
-// Percent-encode using the browser (safe)
-const encodedText = encodeURIComponent(messageWithFallback);
-
-const waProtocol = "whatsapp://send?text=" + encodedText;
-const waWeb = "https://wa.me/?text=" + encodedText;
-
-const manualLink = document.getElementById('manualLink');
-manualLink.href = waWeb;
-
-async function tryShare() {
-  if (navigator.share) {
-    try {
-      await navigator.share({ text: messageWithFallback });
-      return;
-    } catch (err) {
-      console.warn('navigator.share failed:', err);
+    let messageWithFallback = message;
+    for (const [symbol, replacement] of Object.entries(fallbacks)) {
+      messageWithFallback = messageWithFallback.replace(new RegExp(symbol, 'g'), replacement);
     }
-  }
-  try {
-    window.location.href = waProtocol;
-    setTimeout(() => { window.location.href = waWeb; }, 1200);
-  } catch (e) {
-    window.location.href = waWeb;
-  }
-}
 
-window.addEventListener('load', tryShare);
-</script>
+    const encodedText = encodeURIComponent(messageWithFallback);
+    const waProtocol = "whatsapp://send?text=" + encodedText;
+    const waWeb = "https://wa.me/?text=" + encodedText;
+
+    const manualLink = document.getElementById('manualLink');
+    manualLink.href = waWeb;
+
+    async function tryShare() {
+      try {
+        if (navigator.share) {
+          await navigator.share({ text: messageWithFallback });
+        } else {
+          window.location.href = waProtocol;
+          setTimeout(() => { window.location.href = waWeb; }, 1200);
+        }
+      } catch (err) {
+        window.location.href = waWeb;
+      }
+    }
+
+    window.addEventListener('load', tryShare);
+  </script>
 </body>
 </html>
+
 
